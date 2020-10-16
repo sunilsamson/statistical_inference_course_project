@@ -1,0 +1,79 @@
+---
+title: "Exponential Distribution vs Central Limit Theorem"
+author: "Sunil Samson S"
+date: "10/16/2020"
+output: html_document
+---
+
+## Overview
+
+The motivation behind this examination is to explore the exponential distribution vs Central Limit theorem. For this analysis, the lambda will be set to 0.4 for the entirety of reenactments. This analysis will look at the distribution of midpoints of 50 exponentials for more than 1000 simulations. 
+
+## Simulation 
+
+Set the simulation variables, lambda, exponentials and seed.
+```{r}
+ECHO=TRUE
+set.seed(2116)
+lambda = 0.4
+exponentials = 50
+```
+
+Run Simulations with variables.
+```{r}
+simMeans = NULL
+for (i in 1 : 1000) simMeans = c(simMeans, mean(rexp(exponentials, lambda)))
+```
+
+## Sample Mean vs Theoritical Mean
+#### Sample Mean
+Ascertaining the mean from the recreations with give the example mean. 
+```{r}
+mean(simMeans)
+```
+
+#### Theoritical Mean
+The hypothetical mean of an exponential circulation is lambda^-1. 
+```{r}
+lambda^-1
+```
+
+#### Comparision
+There is just a slight distinction between the simulations sample mean and the exponential distribution theoritical mean. 
+```{r}
+abs(mean(simMeans)-lambda^-1)
+```
+
+## Sample Variance vs Theoretical Variance
+#### Sample Variance
+Calculating the variance from the simulation means with the sample variance.
+```{r}
+var(simMeans)
+```
+
+### Theoretical Variance
+The theoretical variance of exponential distribution is given by (lambda * sqrt(n))^-2.
+```{r}
+(lambda * sqrt(exponentials))^-2
+```
+
+#### Comparison
+There is just a slight variation between the simulations sample variance and the exponential distribution theoretical variance.
+```{r}
+abs(var(simMeans)-(lambda * sqrt(exponentials))^-2)
+```
+
+## Distribution
+This is a density histogram of the 1000 simulations. There is an overlay with a typical distribution that has a mean of lambda^-1 and standard deviation of (lambda*sqrt(n))^-1, the theoretical normal distribution for the simulations.
+```{r}
+library(ggplot2)
+ggplot(data.frame(y=simMeans), aes(x=y)) + 
+  geom_histogram(aes(y=..density..), binwidth=0.2, fill="#0072B2", 
+                 color="red") +
+  stat_function(fun=dnorm, arg=list(mean=lambda^-1, 
+                                    sd=(lambda*sqrt(exponentials))^-1), 
+                size=2) +
+  labs(title="Simulations Plot", x="Simulation Mean")
+```
+
+
